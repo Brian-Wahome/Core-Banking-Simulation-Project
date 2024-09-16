@@ -2,11 +2,11 @@
 
 The project will use a NoSQL database specifically MongoDB to store data.
 
-Below are the design option considerations for the database design.
+Below are the database schema design options.
 
-### Option 1: One collection to store all the data
+### Option 1: One collection to store all data
 
-The database would consist of one collection namely that will embed accounts and transactions to the customer data.
+The database would consist of one collection that will embed accounts and transactions to the customer data.
 
 The collection name is:
 
@@ -41,7 +41,7 @@ The transactions field will be an array including the following fields:
 
 ### Pros
 
-- Embedding account and transactions data in one documents allows for quicker reads of customer data.
+- Embedding account and transactions data in one document allows for quicker reads of customer data.
 - Atomic updates as updates to the customer, accounts and transactions can be made in one atomic operation.
 
 ### Cons
@@ -52,15 +52,15 @@ The transactions field will be an array including the following fields:
 
 ## Option 2 
 
-The database will consist of three collections that will store customers, accounts and transaction data:
+The database will consist of three collections that will store users, accounts and transaction data separately:
 
 The collections will be named:
 
-- Customers collection
+- Users collection
 - Accounts collection
 - Transaction collection
 
-The customers collection will store documents consisting of the following fields:
+The users collection will store documents consisting of the following fields:
 
 - id
 - first name
@@ -88,7 +88,7 @@ The transactions collection will store documents consisting of the following fie
 
 ### Pros
 
-- Scalability with increase in datasets will be much easier
+- Scalability with increase in transaction datasets will be much easier
 - Query flexibility as transactions can be queried independent of customer
 - Better concurrency management as transactions can be updated independent of customers
 
@@ -101,7 +101,7 @@ The transactions collection will store documents consisting of the following fie
 
 ## Decision
 
-Option 2 will be used as it allows for easier scalability and ease of collection of data to train the fraud detection model.
+Option 2 will be used as it allows for easier scalability and ease of collection of transaction data to train the fraud detection model.
 
 The final database schema can be observed in the diagram below:
 
@@ -114,20 +114,21 @@ classDiagram
         String email
         String password
         Date created_at
-        Account[] accounts
     }
 
     class Account {
+        ObjectId _id
+        ObjectId customer_id
         String account_number
         String account_type
         float balance
         String currency
         Date created_at
-        Transaction[] transactions
     }
 
     class Transaction {
         ObjectId transaction_id
+        ObjectId account_id
         String transaction_type
         float amount
         Date transaction_time
